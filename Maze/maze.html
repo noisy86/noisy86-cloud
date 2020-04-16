@@ -1,0 +1,228 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <style>
+    .win{
+      background-color: gold;
+
+    }
+    .hero	{
+      width: 30px;
+      height: 30px;
+      background-image: url('img/96072fe688a6d10a55e0f46588b6bc1d.jpg');
+      background-repeat: no-repeat;
+      background-size: 30px 30px;
+    }
+
+    .way	{
+      background-color:#FFFFFF
+    }
+    .barrier{
+      background-color: black;
+    }
+    table{
+      border:2px dotted #999999;
+      padding:5px;
+    }
+
+    td{
+      width:30px;
+      height:30px;
+      padding:3px;
+    }
+  </style>
+  <meta charset="utf-8">
+  <script type="text/javascript">
+      var map = [
+          new Array(2,0,0,0,0,1,0,0,0,0,0),
+          new Array(1,0,1,0,0,1,0,0,0,0,0),
+          new Array(0,0,1,0,0,1,0,0,0,0,0),
+          new Array(0,0,1,0,0,0,1,0,0,0,0),
+          new Array(0,0,1,0,0,1,0,0,0,0,0),
+          new Array(1,0,1,0,0,1,0,0,0,0,0),
+          new Array(0,1,1,0,0,1,0,0,0,0,0),
+          new Array(0,0,1,0,0,0,0,4,0,0,0),
+          new Array(0,0,1,0,0,1,0,0,0,0,0),
+          new Array(0,0,1,1,1,1,0,0,0,0,0)];
+
+      var table = null;
+      var newX = 0, newY = 0;
+
+      var hero = {
+          h : 0, //horizontal direction
+          v : 0, //vertical direction
+          x : 0,
+          y : 0
+      };
+
+      function reload() {
+          var list = document.getElementById("map");   // Get the <ul> element with id="myList"
+          list.removeChild(list.childNodes[1]);
+          var map1 = [
+              new Array(2,0,0,0,0,1,0,0,0,0,0),
+              new Array(1,1,1,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,0,1,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,0,4,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0)];
+
+          map = map1;
+          drawMap();
+          init();
+          for (var i=0;i<map.length;i++){
+              for (var j=0;j<11;j++){
+                  if (map[i][j]==4){
+                       xend1 = j;
+                       yend1 = i;
+                  }
+              }
+          }
+      }
+
+      function reload1() {
+          var list = document.getElementById("map");   // Get the <ul> element with id="myList"
+          list.removeChild(list.childNodes[1]);
+          var map2 = [
+              new Array(2,0,0,0,0,1,0,0,0,0,0),
+              new Array(1,1,1,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,0,1,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,0,0,0,0,0),
+              new Array(0,0,0,1,0,1,1,1,0,0,0),
+              new Array(0,0,0,1,0,0,0,4,0,0,0),
+              new Array(0,0,0,1,0,1,1,1,0,0,0)];
+
+          map = map2;
+          drawMap();
+          init();
+
+      }
+
+      function getByid(id) {
+          return document.getElementById(id);
+      }
+
+      function getKeyCode(evt) {
+          var code = (evt.which) ? evt.which : event.keyCode;
+
+          switch(code) {
+              //w
+              case 87:
+                  hero.v = -1; //up direction
+                  hero.h = 0;	 //
+                  break;
+              //s
+              case 83:
+                  hero.v = 1; //down direction
+                  hero.h = 0;	//
+                  break;
+              //a
+              case 65:
+                  hero.v = 0;	//
+                  hero.h = -1; //left direction
+                  break;
+              //d
+              case 68:
+                  hero.v = 0; //
+                  hero.h = 1; //right direction
+                  break;
+          }
+
+          move();
+      }
+
+      function move() {
+          newX = hero.x + hero.h;
+          newY = hero.y + hero.v;
+          //если в новой позиции пусто
+          if(map[newY][newX] == 0 || map[newY][newX] == 2 || map[newY][newX] == 4) {
+              table.rows[hero.y].cells[hero.x].className = "way";
+              table.rows[newY].cells[newX].className = "hero";
+              hero.x = newX;
+              hero.y = newY;
+          }
+
+
+              if (hero.x == xend && hero.y == yend) {
+                  reload();
+              }
+
+
+
+             if(hero.x == xend1 && hero.y == yend1){
+                 reload1();
+             }
+
+      }
+
+      //drawing map
+      function drawMap() {
+
+          var html = "<table cellspacing='0'>";
+
+          for(var i = 0; i < map.length; i++)	{
+              html += "<tr>";
+              for(var j = 0; j < map[0].length; j++)	{
+
+                  switch (map[i][j]) {
+                      case 1 : html += '<td class="barrier"></td>>'
+                          break;
+                      case 2 : html += '<td class="hero"></td>';
+                          break;
+                      case 4 : html += '<td class="win">WIN</td>';
+                          break;
+                      default:
+                          html+='<td class="way"></td>';
+                          break;
+                  }
+              }
+              html += "</tr>";
+          }
+
+          html += "</table>";
+          getByid('map').innerHTML = html;
+      }
+
+      function init() {
+
+          newX = 0, newY = 0;
+
+          hero = {
+              h : 0,
+              v : 0,
+              x : 0,
+              y : 0
+          };
+          drawMap();
+          table = document.getElementsByTagName("table")[0];
+
+      }
+
+      window.onload = function() {
+          init();
+      }
+
+      for (var i=0;i<map.length;i++){
+          for (var j=0;j<11;j++){
+              if (map[i][j]==4){
+                  var xend = j;
+                  var yend = i;
+              }
+          }
+      }
+
+  </script>
+</head>
+<body onkeyup="getKeyCode(event)">
+<div id="map">
+</div>
+WASD
+
+</body>
+</html>
